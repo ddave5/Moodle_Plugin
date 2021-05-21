@@ -160,7 +160,6 @@ class Relaciosema
             $solution = substr($solution, 0, -2);
             $solution.=')'."\r\n";
         }
-        $solution.=self::writeConnectionRelationshemas($relaciosemak);
         return $solution;
     }
 
@@ -179,8 +178,15 @@ class Relaciosema
      * @param string $filepath Az útvonal, amelybe szeretnénk írni a file-t.
      */
     public static function writeInputToTxt($input,$filepath){
+        $input = trim($input);
+        $reltomb = explode(") ",$input);
+
         $solution = "";
-        $reltomb = explode(" ",$input);
+        foreach ($reltomb as $relItem){
+            $relItem = str_replace(" ","",$relItem);
+            $solution.= $relItem . ")\r\n";
+        }
+        $solution = substr($solution, 0, -3);
         $relsematomb = [];
         foreach($reltomb as $relstr){
             $name = "";
@@ -199,7 +205,6 @@ class Relaciosema
             }
             array_push($relsematomb,new Relaciosema($name,$attr,[],$keys));
         }
-        $solution = str_replace(" ","\r\n",$input);
         $solution .= "\r\n";
         $solution.=self::writeConnectionRelationshemas($relsematomb);
         $myfile = fopen($filepath, "w") or die("Unable to open file!");
